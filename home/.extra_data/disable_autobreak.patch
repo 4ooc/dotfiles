@@ -1,0 +1,41 @@
+diff --git a/lua/sj/core.lua b/lua/sj/core.lua
+index cbb7b70..161ca09 100644
+--- a/lua/sj/core.lua
++++ b/lua/sj/core.lua
+@@ -321,7 +321,7 @@ function M.win_find_pattern(win_id, pattern, opts)
+ 	elseif relative == false and forward == true then
+ 		matches = utils.list_extend(prev_matches, next_matches)
+ 	elseif relative == true and forward == false then
+-		matches = utils.list_extend(utils.list_reverse(prev_matches), utils.list_reverse(next_matches))
++		matches = utils.list_extend(utils.list_reverse(prev_matches), next_matches)
+ 	elseif relative == true and forward == true then
+ 		matches = utils.list_extend(next_matches, prev_matches)
+ 	end
+@@ -421,6 +421,11 @@ function M.get_user_input()
+ 
+ 		pattern, label = extract_pattern_and_label(user_input, separator)
+ 		matches = M.win_find_pattern(win_id, pattern, search_opts)
++		local last_char = user_input:sub(#user_input, #user_input)
++		if separator == "" and #matches == 0 and prev_labels_map[last_char] == nil then
++			user_input = last_matching_pattern
++			goto continue
++		end
+ 		if separator == "" then
+ 			labels = M.discard_labels(cache.options.labels, matches)
+ 		end
+@@ -436,7 +441,6 @@ function M.get_user_input()
+ 			last_matching_pattern = pattern
+ 		end
+ 
+-		local last_char = user_input:sub(#user_input, #user_input)
+ 		if separator == "" and #matches == 0 and vim.tbl_contains(labels, last_char) then
+ 			pattern, label = user_input:sub(1, #user_input - 1), last_char
+ 			labels_map = prev_labels_map
+@@ -453,6 +457,7 @@ function M.get_user_input()
+ 		end
+ 
+ 		---
++	    ::continue::
+ 	end
+ 	ui.clear_feedbacks(buf_nr)
+ 

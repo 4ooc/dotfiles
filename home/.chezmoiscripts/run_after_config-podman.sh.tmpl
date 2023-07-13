@@ -1,0 +1,9 @@
+{{- $checkRunningShell := "podman machine info 2>&1 | grep -o Running || true" }}
+{{- $checkConfigShell := "podman machine ssh cat .config/containers/registries.conf 2>&1 | grep -o baidubce || true" }}
+{{- if eq "Running" (output "sh" "-c" $checkRunningShell | trim) -}}
+{{- if eq "" (output "sh" "-c" $checkConfigShell | trim) -}}
+#!/bin/sh
+echo "CHEZMOI(podman): cp registries.conf"
+podman machine ssh cp {{ .extraDataDir }}/registries.conf .config/containers/registries.conf
+{{- end }}
+{{- end }}

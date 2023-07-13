@@ -1,0 +1,5 @@
+{{- if lookPath "brew" -}}
+#!/bin/sh
+echo "CHEZMOI(brew): install bundle"
+brew bundle --no-lock --no-upgrade --file="{{ .extraDataDir }}/Brewfile"
+{{- end }}

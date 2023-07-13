@@ -1,0 +1,31 @@
+let mapleader=' '
+let maplocalleader=' '
+
+set NERDTree
+set easymotion
+set surround
+set multiple-cursors
+set which-key
+
+set notimeout
+set timeoutlen=5000
+set clipboard="unnamedplus"
+
+let g:WhichKeyDesc_Goto = "<Space>f  Goto"
+let g:WhichKeyDesc_Rename = "<Space>r  Rename"
+let g:WhichKeyDesc_Show = "<Space>c  Show"
+
+map f <Action>(AceAction)
+
+nmap [b :bp<CR>
+nmap ]b :bn<CR>
+nmap <leader>ff <Action>(GotoFile)
+nmap <leader>F <Action>(ReformatCode)
+nmap <leader>rn <Action>(RenameElement)
+nmap <leader>ca <Action>(ShowIntentionActions)
+nmap <leader>b <Action>(ToggleLineBreakpoint)
+
+nmap <leader>a <Action>(ActivateStructureToolWindow)
+nmap <C-\> <Action>(ActivateTerminalToolWindow)
+
+nmap <leader>e :NERDTree<CR>

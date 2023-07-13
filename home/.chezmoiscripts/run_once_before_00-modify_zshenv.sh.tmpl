@@ -1,0 +1,24 @@
+#!/bin/sh
+echo "CHEZMOI(zsh): config zshenv"
+{{- if eq .chezmoi.os "android" }}
+ZSHENV="$HOME/../usr/etc/zshenv"
+{{- else }}
+ZSHENV="/etc/zshenv"
+{{- end }}
+
+if [[ ! -e $ZSHENV ]]; then
+  touch $ZSHENV
+fi
+
+export_str='export ZDOTDIR="$HOME/.config/zsh"'
+if ! $(grep "$export_str" "$ZSHENV" -q); then
+  {{- if eq .chezmoi.os "darwin" }}
+  sudo sed -i '' '/.*ZDOTDIR=.*/d' "$ZSHENV"
+  sudo sh -c "echo '$export_str' >>'$ZSHENV'"
+  {{- else if eq .chezmoi.os "android" }}
+  sed -i '/.*ZDOTDIR=.*/d' "$ZSHENV"
+  sudo sh -c "echo '$export_str' >>'$ZSHENV'"
+  {{- else }}
+  echo "Not implements for {{ .chezmoi.os }}"
+  {{- end }}
+fi

@@ -1,0 +1,10 @@
+{{- $global_npmrc := joinPath (env "HOMEBREW_PREFIX") "lib" "node_modules" "npm" "npmrc" -}}
+{{- if stat $global_npmrc -}}
+{{- if $global_npmrc | include | contains ".config" | not -}}
+#!/bin/sh
+echo "CHEZMOI(npm): config npmrc"
+GLOBAL_NPMRC_PATH="{{ $global_npmrc }}"
+sed -i '' -E '/userconfig( )?=.*/d' "$GLOBAL_NPMRC_PATH"
+echo "userconfig = ${XDG_CONFIG_HOME:-$HOME/.confg}/npm/npmrc" >> "$GLOBAL_NPMRC_PATH"
+{{- end }}
+{{- end }}

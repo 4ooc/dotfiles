@@ -1,0 +1,4 @@
+{{ $clashPath := joinPath .chezmoi.homeDir "Library/Mobile Documents/com~apple~CloudDocs/Clash" }}
+{{ if stat $clashPath }}
+{{ $clashPath }}
+{{ end }}

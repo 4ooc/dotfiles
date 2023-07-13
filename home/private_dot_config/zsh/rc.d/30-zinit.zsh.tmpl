@@ -1,0 +1,111 @@
+#!/usr/bin/env zsh
+
+ZINIT_PATH="${XDG_DATA_HOME}/zinit"
+ZINIT_HOME="${ZINIT_PATH}/zinit.git"
+[ ! -d $ZINIT_HOME/.git ] && git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
+[ ! -d $ZINIT_PATH/polaris/bin ] && mkdir -p "$ZINIT_PATH/polaris/bin"
+builtin source "${ZINIT_HOME}/zinit.zsh"
+
+functions -c zinit __original_zinit
+all_params=()
+zinit() {
+  local params=($@)
+  local index_1=0
+
+  for param in ${params[@]}; do
+    if [[ $index_1 = 0 ]] {
+      index_1=1
+
+      if [[ "$param" = "default-ice" || "$param" = "snippet" ]] {
+        if [[ "${#all_params}" != "0" ]] {
+          __original_zinit ${all_params[@]}
+          all_params=()
+        }
+        __original_zinit ${params[@]}
+
+        break
+      }
+
+      [[ "${#all_params}" = "0" ]] && all_params=("light-mode" "for")
+    }
+
+    if [[ "$param" != "ice" && "$param" != "light" ]] {
+      all_params+=("$param")
+    }
+  done
+}
+
+zinit light @NICHOLAS85/z-a-eval
+zinit light @zdharma-continuum/zinit-annex-{default-ice,patch-dl,binary-symlink}
+
+zinit default-ice light-mode lucid depth'1' -q
+
+{{ if stat (joinPath .chezmoi.homeDir ".ssh/github_ed25519") -}}
+zinit light @4ooc/minal
+
+zinit ice lbin'!bin/*' nocompile
+zinit light @4ooc/cola
+
+zinit ice lbin'!' nocompile
+zinit light @4ooc/envctl
+
+zinit ice lbin'!bin/**/*'
+zinit light @4ooc/scripts
+{{- else}}
+zinit ice pick"async.zsh" src"pure.zsh"
+zinit light sindresorhus/pure
+{{- end }}
+
+zinit ice atinit'mkdir -p $XDG_CONFIG_HOME/zlua;export _ZL_DATA=$XDG_CONFIG_HOME/zlua/zlua'
+zinit light @skywind3000/z.lua
+
+zinit ice id-as nocompletions atinit'setopt glob_dots'
+zinit light @marlonrichert/zsh-autocomplete
+
+zinit light @zsh-users/zsh-autosuggestions
+zinit light @zdharma-continuum/fast-syntax-highlighting
+
+# the following plugins from git-release
+zinit ice from'gh-r' extract'!' nocompile src'bin/sdkman-init.sh'
+zinit light @4ooc/sdkman-cli
+
+zinit default-ice lucid from'gh-r' nocompile light-mode lbin'!' -q
+
+{{ if eqFold .chezmoi.os "darwin" -}}
+zinit ice atinit'alias ls="lsd --date=relative -A"'
+zinit light @4ooc/lsd
+
+zinit ice atinit'alias cat="bat --plain"'
+zinit light @sharkdp/bat
+
+zinit ice null extract'!' ver'nightly' lbin'!nvim' atinit'export EDITOR=nvim;'
+zinit light @neovim/neovim
+
+zinit ice bpick'chezmoi**arm**tar**' cp'**/chezmoi.zsh -> _chezmoi'
+zinit light @twpayne/chezmoi
+
+zinit ice extract'!' eval'echo "export LS_COLORS=\"$(./vivid generate ayu)\""'
+zinit light @sharkdp/vivid
+
+zinit ice id-as dl'https://raw.githubusercontent.com/dandavison/delta/master/themes.gitconfig'
+zinit light @dandavison/delta
+
+zinit ice lbin'!age*' extract'!'
+zinit light @FiloSottile/age
+
+zinit light @shopify/ejson
+{{- end }}
+
+zinit default-ice -c -q
+
+functions -c __original_zinit zinit
+unfunction __original_zinit
+unset all_params
+
+zinit ice id-as'mvn-completion' as'completion' mv'mvn-completion -> _mvn'
+zinit snippet https://raw.githubusercontent.com/zsh-users/zsh-completions/master/src/_mvn
+
+zinit snippet @OMZP::sudo
+
+autoload compinit && compinit
+zinit cdreplay -q

@@ -1,0 +1,8 @@
+{{- if stat .encryptedDir -}}
+#!/bin/sh
+echo "CHEZMOI(age): decrypt ejson files"
+{{- $ageFiles := output "sh" "-c" (printf "ls %s/*.age" .encryptedDir) | trim | splitList "\n" }}
+{{- range $ageFiles }}
+echo '{{ printf "%s" . | include | decrypt | trim -}}' > '{{ printf "%s" . | trimSuffix ".age" }}'
+{{- end }}
+{{- end }}

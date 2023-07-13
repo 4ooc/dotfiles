@@ -1,0 +1,7 @@
+{{- /* chezmoi:modify-template */ -}}
+{{- $ejPath := joinPath .encryptedDir "codeup_ed25519.ejson" }}
+{{- if and (stat $ejPath) (stat (joinPath .storageDir "Keys")) -}}
+{{- output "sh" "-c" (printf "ssh-keygen -y -f /dev/stdin <<EOF\n%s\nEOF\n" ((ejsonDecrypt $ejPath).content | b64dec | trim )) -}}
+{{ else }}
+{{- .chezmoi.stdin }}
+{{- end -}}

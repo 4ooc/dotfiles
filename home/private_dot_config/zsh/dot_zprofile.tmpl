@@ -1,0 +1,30 @@
+#!/usr/zsh
+
+set -a
+
+# main config path
+XDG_CACHE_HOME="$HOME/.cache"
+XDG_CONFIG_HOME="$HOME/.config"
+XDG_DATA_HOME="$HOME/.local/share"
+XDG_STATE_HOME="$HOME/.local/state"
+
+# all
+LESSHISTFILE="$XDG_CACHE_HOME"/less/less_history
+
+# go
+GOPATH="$XDG_CACHE_HOME/go"
+
+# python
+PYTHONSTARTUP="${XDG_CONFIG_HOME}/python/init.py"
+
+# enjson
+EJSON_KEYDIR="{{ .storageDir }}/Keys"
+ENCRYPTED_DIR="{{ .chezmoi.workingTree }}/encrypted"
+
+# ruby
+BUNDLE_USER_HOME=$XDG_CACHE_HOME/bundle
+
+# node
+NODE_PATH="/opt/homebrew/lib/node_modules"
+
+set +a

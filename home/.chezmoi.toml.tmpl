@@ -1,0 +1,17 @@
+{{- $storageDir := joinPath .chezmoi.homeDir "storage" (eq .chezmoi.os "android" | int | plural "downloads" "") -}}
+[data] 
+  storageDir = {{ $storageDir | quote }}
+  encryptedDir = {{ joinPath .chezmoi.workingTree "encrypted" | quote }}
+  extraDataDir = {{ joinPath .chezmoi.sourceDir ".extra_data" | quote }}
+
+[merge]
+  command = "nvim"
+  args = ["-d"]
+
+encryption = "age"
+[age]
+  identity = {{ joinPath .chezmoi.cacheDir "chezmoi.age" | quote }}
+  recipient = "age1easpa38uy3q8apd8sy66849xfhz33r4rmkspwwpe7yl2a5u3ea7q8y9lfr"
+
+[ejson]
+  keyDir = {{ joinPath $storageDir "Keys" | quote }}

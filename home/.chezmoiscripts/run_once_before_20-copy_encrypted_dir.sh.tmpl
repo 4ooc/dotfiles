@@ -1,0 +1,8 @@
+{{- if stat (joinPath .storageDir "encrypted") -}}
+{{- if not (stat .encryptedDir) -}}
+#!/bin/sh
+
+git clone "{{ .storageDir }}/encrypted" "{{ .encryptedDir }}"
+
+{{- end }}
+{{- end }}

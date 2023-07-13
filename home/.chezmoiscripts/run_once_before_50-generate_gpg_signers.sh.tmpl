@@ -1,0 +1,11 @@
+{{- if and (stat .encryptedDir) (stat .storageDir) (eq .chezmoi.os "darwin") -}}
+#!/bin/zsh
+echo "CHEZMOI(gpg signers): get from ssh secrets"
+{{- $sshFiles := list "codeup_ed25519" "github_ed25519" }}
+{{- $encryptedDir := .encryptedDir }}
+{{- range $sshFiles }}
+echo "{{ (ejsonDecrypt (printf "%s/%s.ejson" $encryptedDir .)).content | b64dec | trim }}" > "$HOME/.ssh/{{ . }}"
+ssh-keygen -y -f "$HOME/.ssh/{{ . }}" > "$HOME/.ssh/{{ . }}.pub"
+{{- end }}
+cat ~/.ssh/{{ printf "{%s}" ($sshFiles | join ",") }}.pub 2> /dev/null | awk '{print $3 " " $1 " " $2}' > "$HOME/.ssh/gpg.signers"
+{{- end }}

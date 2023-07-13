@@ -1,0 +1,9 @@
+.config/git/config
+.config/git/codeup.config
+.config/rclone
+.config/zsh/.zprofile
+.config/zsh/.zshrc
+.config/zsh/*/*aliases.zsh
+.config/zsh/*/*termux.sh
+.config/zsh/*/*zinit.zsh
+.ssh/authorized_keys

@@ -1,0 +1,51 @@
+{{- $idea_project := (output "sh" "-c" "echo $(ls -1d $HOME/*/A*/JetBrains/Intell* 2> /dev/null | tail -n1)" | trim) }}
+{{- $idea_project_xml := (joinPath $idea_project "options/project.default.xml") }}
+{{- $project_maven_setting := output "sh" "-c" (printf "[ -f '%s' ] && (grep MavenImportPreferences '%s' && echo '' || echo 'y') || echo ''" $idea_project_xml $idea_project_xml ) | trim }}
+{{- $project_gradle_setting := output "sh" "-c" (printf "[ -f '%s' ] && (grep GradleLocalSettings '%s' && echo '' || echo 'y') || echo ''" $idea_project_xml  $idea_project_xml ) | trim }}
+
+{{- $path_macros_xml := (joinPath $idea_project "options/path.macros.xml") -}}
+{{- $gradle_settings_xml := (joinPath $idea_project "options/gradle.settings.xml") -}}
+{{- $options_maven_setting := output "sh" "-c" (printf "[ -f '%s' ] && (grep .cache '%s' && echo '' || echo 'y') || echo ''" $path_macros_xml $path_macros_xml ) | trim }}
+{{- $options_gradle_setting := output "sh" "-c" (printf "[ -f '%s' ] && (grep .cache '%s' && echo '' || echo 'y') || echo ''" $gradle_settings_xml $gradle_settings_xml ) | trim }}
+
+{{- $idea_default_maven_xml := "/Applications/IntelliJ IDEA.app/Contents/plugins/maven/lib/maven3/conf/settings.xml" }}
+{{- $default_maven_setting := output "sh" "-c" (printf "[ -f '%s' ] && (grep .cache '%s' && echo '' || echo 'y') || echo ''" $idea_default_maven_xml $idea_default_maven_xml ) | trim }}
+
+{{- if eq "y" $project_maven_setting $project_gradle_setting $options_gradle_setting $options_maven_setting $default_maven_setting -}}
+#!/bin/sh
+{{- end }}
+
+{{- if eq $project_maven_setting "y" }}
+sed -i "" '/<defaultProject/a\
+    <component name="MavenImportPreferences"> \
+      <option name="generalSettings"> \
+        <MavenGeneralSettings> \
+          <option name="userSettingsFile" value="$USER_HOME$/.config/maven/setting.xml" /> \
+        </MavenGeneralSettings> \
+      </option> \
+    </component> \
+' "{{ $idea_project_xml }}"
+echo "CHEZMOI(IDEA): project maven home"
+{{ end }}
+{{- if eq $project_gradle_setting "y" }}
+sed -i "" '/<defaultProject/a\
+    <component name="GradleLocalSettings"> \
+      <option name="myGradleUserHome" value="$USER_HOME$/.cache/gradle" />\
+    </component> \
+' "{{ $idea_project_xml }}"
+echo "CHEZMOI(IDEA): project gradle home"
+{{ end -}}
+{{- if eq $options_maven_setting "y" }}
+sed -i "" 's#.*MAVEN_REPOSITORY.*#    <macro name="MAVEN_REPOSITORY" value="$USER_HOME$/.cache/maven" />#g' {{ $path_macros_xml | quote }}
+echo "CHEZMOI(IDEA): options maven home"
+{{ end -}}
+{{- if eq $options_gradle_setting "y" }}
+sed -i "" 's#.*serviceDirectoryPath.*#    <option name="serviceDirectoryPath" value="$USER_HOME$/.cache/gradle" />#g' {{ $gradle_settings_xml | quote }}
+echo "CHEZMOI(IDEA): options gradle home"
+{{ end -}}
+{{- if eq $default_maven_setting "y" }}
+sed -i "" '/<localRepository/{n;a\
+  <localRepository>${user.home}/.cache/maven</localRepository>
+}' "{{ $idea_default_maven_xml }}"
+echo "CHEZMOI(IDEA): default maven home"
+{{ end -}}

@@ -1,0 +1,18 @@
+{{- if stat (joinPath .chezmoi.homeDir ".ssh/github_ed25519") -}}
+Host github.com
+  User               git
+  IdentityFile       ~/.ssh/github_ed25519
+{{- end -}}
+
+{{- if stat (joinPath .chezmoi.homeDir ".ssh/codeup_ed25519") }}
+
+Host codeup.aliyun.com
+  User               git
+  IdentityFile       ~/.ssh/codeup_ed25519
+
+Host termux
+  Hostname           192.168.43.1
+  User               termux
+  Port               8022
+  IdentityFile       ~/.ssh/codeup_ed25519
+{{- end }}

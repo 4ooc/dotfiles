@@ -1,0 +1,33 @@
+{{- /* chezmoi:modify-template */ -}}
+{{- $ejPath := joinPath .encryptedDir "nexus_pwd.ejson" }}
+{{- if and (stat $ejPath) (stat (joinPath .storageDir "Keys")) -}}
+gradle.ext {
+  home_dir = System.getenv("HOME")
+  username = "admin"
+  password = "{{- (ejsonDecrypt $ejPath).content | b64dec | trim }}"
+  nexus_url = "http://127.0.0.1:8081/repository/"
+}
+
+allprojects {
+  repositories {
+    maven {
+      name "localMaven"
+      url "file:///${home_dir}/.cache/maven" 
+    }
+    maven { 
+      name "aliMaven"
+      url "https://maven.aliyun.com/repository/public/"
+    }
+    maven {
+      name "nexus"
+      url "${nexus_url}/maven-public/"
+      credentials {
+        username "${username}"
+        password "${password}"
+      }
+    }
+  }
+}
+{{ else }}
+{{- .chezmoi.stdin }}
+{{- end -}}

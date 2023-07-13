@@ -1,0 +1,13 @@
+#!/bin/sh
+{{- $age_secret_ejson := joinPath .encryptedDir "age_secret" -}}
+{{- if stat $age_secret_ejson -}}
+{{- if stat .storageDir }}
+echo "CHEZMOI(secret): age generate"
+# age_secret.ejson hash: {{ $age_secret_ejson | include | sha256sum }}
+mkdir -p "{{ .chezmoi.cacheDir }}"
+echo '{{ (ejsonDecrypt $age_secret_ejson).content }}' | base64 -d | age --decrypt --output "{{ .chezmoi.cacheDir }}/chezmoi.age"
+{{- end }}
+{{- else -}}
+echo "CHEZMOI(secret): age remove"
+rm -vf "{{ .chezmoi.cacheDir }}/chezmoi.age"
+{{- end }}

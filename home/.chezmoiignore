@@ -1,0 +1,17 @@
+{{- $profile := eq .chezmoi.os "darwin" "android" | int | plural .chezmoi.os "other" -}}
+
+# ignore all
+*
+
+# retrieve file patterns from profile
+{{ output "sh" "-c" (printf ". %s/myscripts.sh; parseProfile %s/profile_%s" .extraDataDir .extraDataDir $profile) | trim }}
+
+# ignore .ssh if encrypted dir not exist
+{{- if stat .encryptedDir | not }}
+.ssh/*
+{{- end }}
+
+# ignore encrypted_*.age if chezmoi.age not exist
+{{- if not (stat (joinPath .chezmoi.cacheDir "chezmoi.age")) }}
+{{ output "sh" "-c" (printf "command find %s -type f -name 'encrypted_*.age' | sed -n 's/.*encrypted_\\([^\\]*\\).age/**\\/\\1/p'" .chezmoi.sourceDir) | trim }}
+{{- end }}

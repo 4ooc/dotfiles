@@ -1,0 +1,4 @@
+*
+!.config/rclone
+!**/*termux.sh
+!.ssh/authorized_keys
