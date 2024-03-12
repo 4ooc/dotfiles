@@ -1,0 +1,5 @@
+<application>
+  <component name="PathMacrosImpl">
+    <macro name="MAVEN_REPOSITORY" value="$USER_HOME$/.cache/maven" />
+  </component>
+</application>

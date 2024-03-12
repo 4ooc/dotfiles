@@ -1,0 +1,19 @@
+{{- $zshEnv := joinPath (eq .chezmoi.os "android" | ternary ( joinPath .chezmoi.homeDir "../usr") "") "/etc/zshenv" -}}
+{{- if or (stat $zshEnv | not) (include $zshEnv | contains "ZDOTDIR" | not ) -}}
+{{- $sudo := eq .chezmoi.os "darwin" | ternary "sudo" "" -}}
+{{- $division := eq .chezmoi.os "darwin" | ternary " " "" -}}
+#!/bin/sh
+echo "CHEZMOI(zsh): config zshenv"
+
+if [[ ! -e $zshEnv ]]; then
+  {{ printf "%s touch '%s'" $sudo $zshEnv | trim }}
+fi
+
+export_str='export ZDOTDIR="$HOME/.config/zsh"'
+{{- if eq .chezmoi.os "darwin" "android" }}
+{{ printf "%s sed -i%s'' '/.*ZDOTDIR=.*/d' '%s'" $sudo $division $zshEnv | trim }}
+{{ printf "%s sh -c \"echo '$export_str' >> '%s'\"" $sudo $zshEnv | trim }}
+{{- else }}
+echo "CHEZMOI(zsh): Not implements for {{ .chezmoi.os }}"
+{{- end }}
+{{- end }}

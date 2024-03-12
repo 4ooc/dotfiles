@@ -1,0 +1,59 @@
+[user]
+  name = 4ooc
+  email = 22727824+4ooc@users.noreply.github.com
+  signingKey = ~/.ssh/github_ed25519.pub
+
+[includeIf "hasconfig:remote.*.url:https://codeup.aliyun.com/**"]
+  path = ~/.config/git/codeup.config
+[includeIf "hasconfig:remote.*.url:git@codeup.aliyun.com*/**"]
+  path = ~/.config/git/codeup.config
+
+[core]
+  pager = delta
+  hooksPath = ~/.config/git/hook
+[gpg]
+  format = ssh
+[gpg "ssh"]
+  allowedSignersFile = ~/.ssh/gpg.signers
+
+[interactive]
+  diffFilter = delta
+
+[delta]
+    features = side-by-side line-numbers decorations
+    syntax-theme = Dracula
+    plus-style = syntax "#003800"
+    minus-style = syntax "#3f0001"
+
+[delta "decorations"]
+    commit-decoration-style = bold yellow box ul
+    file-style = bold yellow ul
+    file-decoration-style = none
+    hunk-header-decoration-style = cyan box ul
+
+[delta "line-numbers"]
+    line-numbers-left-style = cyan
+    line-numbers-right-style = cyan
+    line-numbers-minus-style = 124
+    line-numbers-plus-style = 28
+
+
+[commit]
+  gpgsign = true
+[tag]
+  gpgsign = true
+[diff]
+  colorMoved = default
+[merge]
+  conflictstyle = diff3
+[pull]
+  rebase = true
+{{- if stat (joinPath .chezmoi.homeDir ".ssh/github_ed25519") }}
+
+[url "git@github.com:"]
+  insteadOf = "https://github.com"
+{{- end }}
+{{- if stat (joinPath .chezmoi.homeDir ".ssh/codeup_ed25519") }}
+[url "git@codeup.aliyun.com:"]
+  insteadOf = "https://codeup.aliyun.com"
+{{ end -}}

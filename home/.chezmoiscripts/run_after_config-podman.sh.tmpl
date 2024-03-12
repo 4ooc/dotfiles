@@ -1,0 +1,9 @@
+{{- if lookPath "podman" -}}
+{{- if output "podman" "machine" "info" | contains "Running" -}}
+{{- if output "podman" "machine" "ssh" "cat" ".config/containers/registries.conf" | contains "baidubce" | not -}}
+#!/bin/sh
+echo "CHEZMOI(podman): cp registries.conf"
+podman machine ssh cp {{ .extraDataDir }}/patch/registries.conf .config/containers/registries.conf
+{{- end }}
+{{- end }}
+{{- end }}

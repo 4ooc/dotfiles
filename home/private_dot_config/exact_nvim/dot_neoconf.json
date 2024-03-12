@@ -1,0 +1,11 @@
+{
+  "lspconfig":{
+    "lemminx":{
+      "settings":{
+        "xml":{
+          "server": {"workDir": "~/cache/lemminx/"}
+        }
+      }
+    }
+  }
+}

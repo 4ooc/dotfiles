@@ -1,0 +1,24 @@
+{{- if stat (joinPath .chezmoi.homeDir ".ssh/github_ed25519") -}}
+Host github.com
+  User               git
+  Hostname           ssh.github.com
+  Port               443
+  IdentityFile       ~/.ssh/github_ed25519
+{{- end -}}
+
+{{- if stat (joinPath .chezmoi.homeDir ".ssh/codeup_ed25519") }}
+
+Host codeup.aliyun.com
+  User               git
+  IdentityFile       ~/.ssh/codeup_ed25519
+
+Host gitee.com
+  User               git
+  IdentityFile       ~/.ssh/codeup_ed25519
+
+Host termux*
+  Port               8022
+  ConnectTimeout     1
+  IdentityFile       ~/.ssh/codeup_ed25519
+  ProxyCommand       nc $(echo "%h" | awk -F- '$2{print $2} !$2{system("cat $PREFIX/tmp/my_host")}') %p
+{{- end }}
