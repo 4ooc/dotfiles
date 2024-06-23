@@ -1,0 +1,13 @@
+{{- $termux_host_file := joinPath (env "PREFIX") "/tmp/my_host" }}
+{{- if not (stat .encryptedDir) -}}
+{{- if eq .chezmoi.os "Android" }}
+#!/bin/sh
+
+git clone "{{ .storageDir }}/encrypted" "{{ .encryptedDir }}"
+{{- else if stat $termux_host_file }}
+#!/bin/sh
+
+git clone "http://{{ include $termux_host_file }}:8080/encrypted" "{{ .encryptedDir }}"
+git -C "{{ .encryptedDir }}" remote set-url origin termux:storage/shared/xCloud/encrypted
+{{- end }}
+{{- end }}

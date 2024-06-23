@@ -1,0 +1,15 @@
+{{- if lookPath "ej" }}
+{{- $sshEjsonFiles := glob ( joinPath .encryptedDir "*ed25519.ejson" ) }}
+{{- $sshPubFiles := glob (joinPath (env "HOME") ".ssh/*ed25519.pub") }}
+{{- if ne (len $sshEjsonFiles) (len $sshPubFiles) -}}
+#!/bin/sh
+echo "CHEZMOI(ssh config): get from ssh secrets"
+mkdir -v "$HOME/.ssh"
+{{- range $sshEjsonFiles }}
+{{ $plainName := base . | trimSuffix ".ejson" }}
+echo "{{ output "ej" $plainName }}" > "$HOME/.ssh/{{ $plainName }}"
+chmod 400 "$HOME/.ssh/{{ $plainName }}"
+ssh-keygen -y -f "$HOME/.ssh/{{ $plainName }}" > "$HOME/.ssh/{{ $plainName }}.pub"
+{{- end }}
+{{- end }}
+{{- end }}
