@@ -1,0 +1,2 @@
+#!/bin/sh
+cat ~/.ssh/*.pub | awk '{print $3 " " $1 " " $2}'

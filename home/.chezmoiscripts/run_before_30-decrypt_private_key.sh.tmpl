@@ -1,0 +1,10 @@
+{{- $age_secret_ejson := joinPath .encryptedDir "age_secret.ejson" -}}
+{{- $chezmoi_age := joinPath .chezmoi.cacheDir "chezmoi.age" -}}
+{{- if stat $age_secret_ejson -}}
+{{- if (stat $chezmoi_age | not) -}}
+#!/bin/sh
+echo "CHEZMOI(secret): age generate"
+mkdir -pv "{{ .chezmoi.cacheDir }}"
+chezmoi execute-template '{{ "{{" }} output "ej" "age_secret" }}' | chezmoi age decrypt --passphrase --output "{{ $chezmoi_age }}"
+{{- end }}
+{{- end }}

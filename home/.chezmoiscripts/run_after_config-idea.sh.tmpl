@@ -1,0 +1,27 @@
+{{- $idea_project := glob "/Users/x/*/A*/JetBrains/Intell*" | last | default "" }}
+{{- if stat $idea_project -}}
+{{- $idea_project_xml := joinPath $idea_project "options/project.default.xml" }}
+{{- $path_macros_xml := (joinPath $idea_project "options/path.macros.xml") -}}
+{{- $idea_maven_xml := "/Applications/IntelliJ IDEA.app/Contents/plugins/maven/lib/maven3/conf/settings.xml" -}}
+
+{{- $all_ready := true -}}
+{{- if stat $idea_project_xml -}}
+{{- $all_ready = and $all_ready (include $idea_project_xml | contains "MavenImportPreferences") -}}
+{{- $all_ready = and $all_ready (include $idea_project_xml | contains "GradleLocalSettings") -}}
+{{- end -}}
+{{- if and $all_ready (stat $path_macros_xml) -}}
+{{- $all_ready = and $all_ready (include $path_macros_xml | contains ".cache") -}}
+{{- end -}}
+{{- if and $all_ready (stat $idea_maven_xml) -}}
+{{- $all_ready = and $all_ready (include $idea_maven_xml | contains ".cache") -}}
+{{- end -}}
+
+{{- if not $all_ready -}}
+#!/bin/sh
+
+echo "CHEZMOI(idea): config idea"
+cp {{ joinPath .extraDataDir "patch/project.default.xml" | quote }} {{ $idea_project_xml | quote }}
+cp {{ joinPath .extraDataDir "patch/path.macros.xml" | quote }} {{ $path_macros_xml | quote }}
+cp {{ joinPath .extraDataDir "patch/settings.xml" | quote }} {{ $idea_maven_xml | quote }}
+{{- end }}
+{{- end }}

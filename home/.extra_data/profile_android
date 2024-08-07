@@ -1,0 +1,14 @@
+!*
+.config/git
+!.config/git/hook
+.config/4ooc
+!.config/4ooc/envctl.conf
+.config/rclone
+.config/zsh/.zprofile
+.config/zsh/.zshrc
+.config/zsh/*/*aliases.zsh
+.config/zsh/*/*history.zsh
+.config/zsh/*/*termux.zsh
+.config/zsh/*/*zinit.zsh
+.ssh
+.termux

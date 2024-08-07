@@ -1,0 +1,21 @@
+{{- if eq .chezmoi.os "android" -}}
+#!/usr/bin/env zsh
+
+if test -z "$SSH_CONNECTION"; then
+  if command -v "lant" > /dev/null; then
+    lant
+  fi
+
+  if command -v "rclone" > /dev/null; then
+    set +m
+    rclone serve webdav $HOME/storage/shared/xCloud --addr :8080 &>>$TMPDIR/rclone.log &
+    set -m
+  fi
+
+  if command -v "sshd" > /dev/null; then
+    sshd
+  fi
+
+  termux-wake-lock
+fi
+{{- end }}

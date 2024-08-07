@@ -1,0 +1,4 @@
+!.config/zsh/*/*termux.zsh
+!.config/rclone
+!.ssh/authorized_keys
+!.termux

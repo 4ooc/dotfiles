@@ -1,0 +1,9 @@
+{{- if lookPath "brew" -}}
+{{- $bundles := output "sh" "-c" (printf "cat %s/Brewfile | grep -e 'brew ' -e 'cask ' -c" .extraDataDir) | trim | atoi -}}
+{{- $packageNum := glob (joinPath (env "HOMEBREW_CELLAR" | default (output "brew" "--cellar" | trim)) "*") | len -}}
+{{- if le $packageNum $bundles -}}
+#!/bin/sh
+echo "CHEZMOI(brew): install bundle"
+brew bundle --no-lock --no-upgrade --verbose --file="{{ .extraDataDir }}/Brewfile"
+{{- end }}
+{{- end }}
