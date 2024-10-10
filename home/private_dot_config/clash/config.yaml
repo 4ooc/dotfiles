@@ -1,0 +1,118 @@
+mixed-port: 7890
+allow-lan: false
+bind-address:
+  # 192.168.122.11
+  # "[aaaa::a8aa:ff:fe09:57d8]"
+  '*'
+# clash mode（rule/global/direct）
+mode: script
+# log level（info/warning/error/debug/silent）
+log-level: debug
+external-controller: 127.0.0.1:9090
+dns:
+  enable: true
+  listen: 0.0.0.0:1053
+  ipv6: false
+  enhanced-mode: fake-ip
+  default-nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
+  nameserver:
+    - https://doh.pub/dns-query
+    - https://dns.alidns.com/dns-query
+
+script:
+  code: |
+    def main(ctx, metadata):
+      ip = ctx.resolve_ip(metadata["host"])
+      if ip == "":
+        return "DIRECT"
+      metadata["dst_ip"] = ip
+
+      rule = ""
+      for name in ctx.rule_providers:
+        if ctx.rule_providers[name].match(metadata):
+          rule = name
+          break
+
+      if rule == "AD-Ban" or rule == "Reject":
+        return "REJECT"
+
+      if rule == "Personal" or rule == "Foreign":
+        return "Proxy"
+
+      return "DIRECT"
+
+proxies:
+
+proxy-providers:
+
+  Long: &Long
+    type: file
+    path: proxies/long.yaml
+    health-check:
+      enable: true
+      interval: 300
+      url: https://www.google.com/gen_204
+
+  Git: &Git
+    type: file
+    path: proxies/github_auto.yaml
+    health-check:
+      enable: true
+      interval: 600
+      url: https://www.google.com/gen_204
+
+  Short: &Short
+    type: file
+    path: proxies/very_good.yaml
+    health-check:
+      enable: true
+      interval: 120
+      url: https://www.google.com/gen_204
+
+proxy-groups:
+  # 策略组
+  - name: Proxy # 节点选择
+    type: select
+    proxies:
+      - Long
+      - Free
+
+  - name: Long
+    type: url-test
+    use:
+      - Long
+
+  - name: Free
+    type: select
+    use:
+      - Short
+      - Long 
+      - Git
+   
+# 远程规则集
+rule-providers:
+  AD-Ban: # 广告拦截
+    type: http
+    behavior: classical
+    url: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Advertising/Advertising.yaml
+    path: ./ruleset/Advertising.yaml
+    interval: 86400
+
+  Foreign: # 国外网站
+    type: http
+    behavior: classical
+    url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Providers/ProxyLite.yaml
+    path: ./ruleset/Foreign.yaml
+    interval: 86400
+
+  Personal:
+    type: file
+    behavior: classical
+    path: ./ruleset/Personal.yaml
+
+  Reject:
+    type: file
+    behavior: classical
+    path: ./ruleset/Reject.yaml

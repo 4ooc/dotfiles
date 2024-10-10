@@ -1,0 +1,20 @@
+{{- $encryptedDir := joinPath .chezmoi.workingTree "encrypted" -}}
+{{- $customDataDir := joinPath .chezmoi.sourceDir ".custom_data" -}}
+[data] 
+  encryptedDir = {{ $encryptedDir | quote }}
+  customDataDir = {{ $customDataDir | quote }}
+
+[merge]
+  command = "nvim"
+  args = ["-d"]
+
+encryption = "age"
+[age]
+  identity = {{ joinPath .chezmoi.cacheDir "chezmoi.age" | quote }}
+  recipient = "age1pwu8umlxetey6y5uzamnncg37vfyuuvaglp8q4hdffnyhgamtfgsxkcc9f"
+
+[secret]
+  command = {{ joinPath $encryptedDir "bin/pass" | quote }}
+
+[scriptEnv]
+  PATH = {{ env "PATH" | splitList ":" | concat (list (joinPath $customDataDir "script") (joinPath $encryptedDir "bin" )) | sortAlpha | uniq | join ":" | quote }}
