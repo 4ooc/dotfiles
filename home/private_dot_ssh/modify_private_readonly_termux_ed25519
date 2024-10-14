@@ -1,0 +1,6 @@
+{{- /* chezmoi:modify-template */ -}}
+{{- if includeTemplate "canDecrypt" }}
+{{- secret "termux_ed25519" | decrypt -}}
+{{ else }}
+{{- .chezmoi.stdin }}
+{{- end -}}

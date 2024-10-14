@@ -1,0 +1,9 @@
+{{- $termux_host_path := joinPath (env "PREFIX") "/tmp/my_host" -}}
+{{- $termux_host := "" -}}
+{{- if stat $termux_host_path -}}
+{{- $termux_host = include $termux_host_path -}}
+{{- end -}}
+{{- if empty $termux_host -}}
+{{- $termux_host = env "TERMUX_HOST" -}}
+{{- end -}}
+{{- $termux_host -}}
