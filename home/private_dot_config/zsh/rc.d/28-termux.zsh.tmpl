@@ -1,0 +1,18 @@
+{{- if eq .chezmoi.os "android" -}}
+#!/usr/bin/env zsh
+
+export TERMUX_HOST=127.0.0.1
+if test -z "$SSH_CONNECTION"; then
+  if command -v "link_server" > /dev/null; then
+    link_server
+  fi
+
+  if command -v "sshd" > /dev/null; then
+    sshd
+  fi
+
+  termux-wake-lock
+fi
+
+alias xServer="rclone serve webdav $HOME/xCloud --addr :8080"
+{{- end }}

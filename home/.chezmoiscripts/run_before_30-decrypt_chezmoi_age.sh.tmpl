@@ -1,0 +1,8 @@
+{{- $chezmoi_age := joinPath .chezmoi.cacheDir "chezmoi.age" -}}
+{{- $age_secret := joinPath .encryptedDir "age_secret" -}}
+{{- if and (stat $chezmoi_age | not) (stat $age_secret) -}}
+#!/bin/sh
+echo "CHEZMOI(secret): age generate"
+mkdir -pv "{{ .chezmoi.cacheDir }}"
+cat "{{ $age_secret }}"  | chezmoi age decrypt --passphrase --output "{{ $chezmoi_age }}"
+{{- end }}

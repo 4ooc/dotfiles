@@ -1,0 +1,21 @@
+Host termux*
+  Tag                nogpg
+  Port               8022
+  IdentityFile       ~/.ssh/termux_ed25519
+
+Host termux* *-*
+  ProxyCommand       nc $(echo "%h" | awk -F- '$2{print $2} !$2{system("termux-host")}') %p
+
+{{ $gpg_auto_pass := lookPath "gpg_auto_pass" -}}
+{{- if and (eq .chezmoi.os "darwin") $gpg_auto_pass -}}
+# Try to preset the passphrase, and if it fails, change the hostname to avoid GPG TUI
+Match !tagged nogpg exec "{{ $gpg_auto_pass }} %n uid %l%h%p%r%j >/dev/null"
+  IdentitiesOnly     no
+{{- end }}
+
+Host *
+  User               git
+  ControlMaster      auto
+  ControlPath        ~/.ssh/sockets/%r@%h:%p
+  ControlPersist     10m
+  IdentitiesOnly     yes

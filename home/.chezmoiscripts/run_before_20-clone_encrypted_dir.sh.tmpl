@@ -1,0 +1,19 @@
+{{- $privatePrivateURL := includeTemplate "discoverPrivateURL" -}}
+{{ if and (stat .encryptedDir | not) (empty $privatePrivateURL | not) -}}
+#!/bin/sh
+
+echo "CHEZMOI(ej): copy encrypted dir"
+{{ if eq .chezmoi.os "android" -}}
+{{- $termuxStorageDir := joinPath .chezmoi.homeDir "/xCloud" -}}
+{{- $post_update := joinPath $termuxStorageDir "encrypted.git/hooks/post-update" -}}
+{{ if not (stat $post_update) -}}
+git config --global --add safe.directory '*'
+
+mv "{{ $post_update }}.sample" "{{ $post_update }}"
+git -C "{{ $termuxStorageDir }}/encrypted.git" update-server-info
+{{- end }}
+{{- end }}
+
+git clone "ssh://{{ $privatePrivateURL }}:8022/~/xCloud/encrypted.git/" "{{ .encryptedDir }}"
+git -C "{{ .encryptedDir }}" remote set-url origin termux:~/xCloud/encrypted.git/
+{{- end }}
