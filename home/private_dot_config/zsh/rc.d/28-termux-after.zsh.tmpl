@@ -1,0 +1,26 @@
+{{- if eq .chezmoi.os "android" -}}
+#!/usr/bin/env zsh
+
+if test -z "$SSH_CONNECTION"; then
+  if command -v "link_server" > /dev/null; then
+    link_server
+  fi
+
+  if command -v "nginx" > /dev/null; then
+    nginx
+  fi
+
+  vault_path="$HOME/vault"
+  if test -d "$vault_path"; then
+    set +m;
+    WEB_VAULT_FOLDER="$vault_path/web-vault" \
+    DATA_FOLDER="$HOME/.vw_data" \
+       nohup "$vault_path/vaultwarden" >>"$PREFIX/tmp/vault.log" 2>&1 &
+    set -m;
+  fi
+
+  termux-wake-lock
+fi
+
+alias xServer="rclone serve webdav $HOME/xCloud --addr :8080"
+{{- end }}
