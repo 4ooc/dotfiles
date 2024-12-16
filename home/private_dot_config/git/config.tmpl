@@ -1,0 +1,45 @@
+[user]
+  name = inx
+  email = 183034020+4ooc@users.noreply.github.com
+  signingKey = {{ output "get_signingkey" "github" | quote }}
+
+[core]
+  pager = delta --no-gitconfig
+  hooksPath = ~/.config/git/hook
+
+[help]
+  autocorrect = 1
+
+[interactive]
+  diffFilter = delta --color-only
+
+{{ $gpg_no_pinentry := lookPath "gpg_no_pinentry" -}}
+{{- if $gpg_no_pinentry -}}
+[gpg]
+  program={{ $gpg_no_pinentry | quote }}
+{{- end }}
+
+[commit]
+  gpgsign = true
+[tag]
+  gpgsign = true
+[diff]
+  colorMoved = default
+[merge]
+  conflictstyle = diff3
+[pull]
+  rebase = true
+
+{{ if eq .chezmoi.os "android" -}}
+[safe]
+  directory = *
+{{- end -}}
+
+[includeIf "hasconfig:remote.*.url:https://codeup.aliyun.com/**"]
+  path = ~/.config/git/codeup.config
+[includeIf "hasconfig:remote.*.url:git@codeup.aliyun.com:*/**"]
+  path = ~/.config/git/codeup.config
+[includeIf "hasconfig:remote.*.url:**/dotfiles.git"]
+  path = ~/.config/git/rmHook.config
+[includeIf "hasconfig:remote.*.url:**/vault.x/**"]
+  path = ~/.config/git/rmHook.config

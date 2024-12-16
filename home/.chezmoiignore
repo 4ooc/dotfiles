@@ -1,0 +1,11 @@
+{{- $profile := eq .chezmoi.os "darwin" "android" | ternary .chezmoi.os "other" -}}
+
+# retrieve file patterns from profile
+{{ output "negative_ignore_pattern" $profile }}
+
+# ignore encrypted_*.age if chezmoi.age not exist
+{{- if not (stat (joinPath .chezmoi.cacheDir "chezmoi.age")) }}
+{{- range (glob (joinPath .chezmoi.sourceDir "**/encrypted_*.age")) }}
+**/{{ base . | trimPrefix "encrypted_" | trimSuffix ".age" }}
+{{- end }}
+{{- end }}
