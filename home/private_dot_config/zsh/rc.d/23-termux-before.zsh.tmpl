@@ -1,0 +1,11 @@
+{{- if eq .chezmoi.os "android" -}}
+#!/usr/bin/env zsh
+
+export TERMUX_HOST=127.0.0.1
+if test -z "$SSH_CONNECTION"; then
+  if command -v "sshd" > /dev/null; then
+    sshd
+  fi
+  termux-wake-lock
+fi
+{{- end }}

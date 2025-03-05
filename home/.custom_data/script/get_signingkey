@@ -1,0 +1,10 @@
+#!/bin/zsh
+
+name=${1:u}
+keyColos=$(gpg --list-secret-keys --with-colons  "$name SIGN" 2>/dev/null)
+signingkey=$(echo "$keyColos" | awk -F: '/sec:u|ssb:u/ {if ($12 ~ /s/) {print $5}}')
+if (( $(echo "$signingkey" | wc -w) != 1 )); then
+  exit
+fi
+
+echo -n $signingkey
