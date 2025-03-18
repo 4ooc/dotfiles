@@ -1,0 +1,34 @@
+#!/usr/bin/expect -f
+set timeout -1
+set home_dir $env(HOME)
+
+set host [lindex $argv 0]
+set host_pattern [string map {. _} $host]
+
+set file_list [exec find "$home_dir/.ssh" -name "${host_pattern}_*"]
+set filtered_files [lsearch -inline -regexp [split $file_list "\n"] "^(?!.*\\.pub$).*"]
+
+if {[llength $filtered_files] == 1} {
+  set private_file [lindex $filtered_files 0]
+  set password [exec chezmoi execute-template "{{ \"test\" }}"]
+  puts "-$password-"
+  spawn ssh-add $private_file
+  expect {
+    -re "Identity added: .*" {
+      exit
+    }
+    "Enter passphrase for $private_file:" {
+      send "$password\r"
+      expect {
+        -re "Bad passphrase, .*" {
+          exit 1
+        }
+        eof {
+          exit
+        }
+      }
+    }
+  }
+}
+
+exit 1
