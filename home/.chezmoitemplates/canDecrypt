@@ -1,0 +1,3 @@
+{{- if env "CHEZMOI_CAN_DECRYPT" -}}
+True
+{{- end -}}
