@@ -1,0 +1,32 @@
+{{- if eq .chezmoi.os "android" -}}
+#!/usr/bin/env zsh
+
+if test -z "$SSH_CONNECTION"; then
+  if command -v "my_agent" > /dev/null; then
+		my_agent
+  fi
+
+  if command -v "nginx" > /dev/null; then
+    nginx
+  fi
+
+  vault_path="$HOME/vault"
+  if test -d "$vault_path"; then
+    (
+       cd "$vault_path"
+
+       export ROCKET_PORT=2000
+       export WEB_VAULT_FOLDER="./web-vault"
+       export DATA_FOLDER="$XDG_DATA_HOME/vault"
+
+       ./vaultwarden >>"$TMPDIR/vault.log" 2>&1 &
+			 ./config-merge >>"$TMPDIR/merge.log" 2>&1 &
+       uvicorn favicon_server:app --host localhost --port 2001  >>"$TMPDIR/favicon.log" 2>&1 &
+     )
+  fi
+
+  termux-wake-lock
+fi
+
+alias xServer="rclone serve webdav $HOME/xCloud/DAV --addr localhost:2002"
+{{- end }}

@@ -1,0 +1,44 @@
+{{- /* chezmoi:modify-template */ -}}
+{{- if includeTemplate "canDecrypt" -}}
+[user]
+  name = inx
+  email = 183034020+4ooc@users.noreply.github.com
+  signingKey = {{ secret "file" "github_ed25519.pub" | trim | quote }}
+
+[core]
+  hooksPath = ~/.config/git/hook
+
+[help]
+  autocorrect = 1
+
+[gpg]
+  format = ssh
+[gpg "ssh"]
+  allowedSignersFile = "I didn't do"
+
+[commit]
+  gpgsign = true
+[tag]
+  gpgsign = true
+[pull]
+  rebase = true
+
+{{ if eq .chezmoi.os "android" -}}
+[safe]
+  directory = *
+{{- end -}}
+
+[includeIf "hasconfig:remote.*.url:https://codeup.aliyun.com/**"]
+  path = ~/.config/git/codeup.config
+[includeIf "hasconfig:remote.*.url:git@codeup.aliyun.com:*/**"]
+  path = ~/.config/git/codeup.config
+[includeIf "hasconfig:remote.*.url:**/dotfiles.git"]
+  path = ~/.config/git/rmHook.config
+[includeIf "hasconfig:remote.*.url:**/vault.x/**"]
+  path = ~/.config/git/rmHook.config
+
+[include]
+  path = ~/.config/git/delta.config
+{{ else }}
+{{- .chezmoi.stdin }}
+{{- end -}}

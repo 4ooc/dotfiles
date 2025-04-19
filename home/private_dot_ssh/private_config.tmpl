@@ -1,0 +1,21 @@
+Host vault.x
+  Tag                disabled
+{{- if eq .chezmoi.os "android" }}
+  Hostname           localhost
+{{- end }}
+  Port               8022
+  IdentityFile       ~/.ssh/termux_ed25519
+
+{{- $auto_add := lookPath "auto_add_ssh_key" }}
+{{- if $auto_add }}
+
+Match !tagged disabled exec "{{ $auto_add }} %h >/dev/null"
+  IdentitiesOnly     no
+{{- end }}
+
+Host *
+  User               git
+  ControlMaster      auto
+  ControlPath        ~/.ssh/sockets/%r@%h:%p
+  ControlPersist     10m
+  IdentitiesOnly     yes
