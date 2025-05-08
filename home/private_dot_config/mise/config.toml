@@ -1,0 +1,8 @@
+[tools]
+java = "zulu-8.80.0.17"
+
+[settings]
+experimental = true
+
+[settings.status]
+show_tools = false

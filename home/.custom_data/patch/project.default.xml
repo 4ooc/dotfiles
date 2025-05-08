@@ -1,0 +1,30 @@
+<application>
+	<component name="ProjectManager">
+		<defaultProject>
+			<component name="AutoImportSettings">
+				<option name="autoReloadType" value="SELECTIVE" />
+			</component>
+			<component name="GradleLocalSettings">
+				<option name="myGradleUserHome" value="$USER_HOME$/.cache/gradle" />
+			</component>
+			<component name="MavenImportPreferences">
+				<option name="generalSettings">
+					<MavenGeneralSettings>
+						<option name="userSettingsFile" value="$USER_HOME$/.config/maven/settings.xml" />
+					</MavenGeneralSettings>
+				</option>
+			</component>
+			<component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "settings.editor.selected.configurable": "preferences.packagesearch.PackageSearchGeneralConfigurable"
+  }
+}]]></component>
+			<component name="WindowStateProjectService">
+				<state x="371" y="37" key="SettingsEditor" timestamp="1703012043727">
+					<screen x="0" y="37" width="1470" height="919" />
+				</state>
+				<state x="371" y="37" key="SettingsEditor/0.37.1470.919" timestamp="1703012043727" />
+			</component>
+		</defaultProject>
+	</component>
+</application>
