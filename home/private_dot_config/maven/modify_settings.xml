@@ -1,0 +1,58 @@
+{{- /* chezmoi:modify-template */ -}}
+{{- if includeTemplate "hasPass" -}}
+<?xml version="1.0" encoding="UTF-8"?>
+
+<settings xmlns="http://maven.apache.org/SETTINGS/1.2.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.2.0 https://maven.apache.org/xsd/settings-1.2.0.xsd">
+  <localRepository>{{ .chezmoi.homeDir }}/.cache/maven</localRepository>
+
+  <pluginGroups>
+  </pluginGroups>
+
+  <proxies>
+  </proxies>
+
+  <servers>
+    <server>
+      <id>nexus-mine</id>
+      <username>admin</username>
+      <password>{{ secret "nexus_pwd" | trim }}</password>
+    </server>
+  </servers>
+
+  <mirrors>
+    <mirror>
+      <id>aliyun_mirror</id>
+      <mirrorOf>central</mirrorOf>
+      <name>Aliyun Mirror</name>
+      <url>https://maven.aliyun.com/repository/public</url>
+    </mirror>
+  </mirrors>
+
+  <profiles>
+    <profile>
+      <id>nexus-mine</id>
+      <repositories>
+        <repository>
+          <id>nexus-mine</id>
+          <url>{{ secret "nexus_url" | trim }}/maven-public/</url>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+          <snapshots>
+            <enabled>true</enabled>
+            <updatePolicy>always</updatePolicy>
+          </snapshots>
+        </repository>
+      </repositories>
+    </profile>
+  </profiles>
+
+  <activeProfiles>
+    <activeProfile>nexus-mine</activeProfile>
+  </activeProfiles>
+</settings>
+{{ else }}
+{{- .chezmoi.stdin }}
+{{- end -}}
