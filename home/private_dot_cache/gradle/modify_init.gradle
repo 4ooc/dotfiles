@@ -1,0 +1,32 @@
+{{- /* chezmoi:modify-template */ -}}
+{{- if includeTemplate "hasPass" -}}
+gradle.ext {
+  home_dir = System.getenv("HOME")
+  username = "admin"
+  password = {{ secret "nexus_pwd" | trim | quote }}
+  nexus_url = {{ secret "nexus_url" | trim | quote }}
+}
+
+allprojects {
+  repositories {
+    maven {
+      name "localMaven"
+      url "file:///${home_dir}/.cache/maven"
+    }
+    maven {
+      name "aliMaven"
+      url "https://maven.aliyun.com/repository/public/"
+    }
+    maven {
+      name "nexus"
+      url "${nexus_url}/maven-public/"
+      credentials {
+        username "${username}"
+        password "${password}"
+      }
+    }
+  }
+}
+{{ else }}
+{{- .chezmoi.stdin }}
+{{- end -}}
