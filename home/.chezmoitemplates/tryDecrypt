@@ -1,0 +1,4 @@
+{{- $agePath := joinPath (env "CHEZMOI_CACHE_DIR") "chezmoi.age" -}}
+{{- if stat $agePath -}}
+{{- printf . | b64dec | decrypt }}
+{{- end -}}
