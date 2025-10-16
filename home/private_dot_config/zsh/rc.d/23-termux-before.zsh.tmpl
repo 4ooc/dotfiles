@@ -1,0 +1,14 @@
+{{- if eq .chezmoi.os "android" -}}
+#!/usr/bin/env zsh
+
+if test -z "$SSH_CONNECTION"; then
+  if command -v "sshd" > /dev/null; then
+    sshd
+  fi
+  termux-wake-lock
+fi
+
+export http_proxy=http://127.0.0.1:7890
+export https_proxy=http://127.0.0.1:7890
+export all_proxy=socks5://127.0.0.1:7890
+{{- end }}

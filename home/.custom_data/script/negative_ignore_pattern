@@ -1,0 +1,28 @@
+#!/bin/sh
+
+extraDir="${CHEZMOI_SOURCE_DIR:-$(chezmoi source-path)}/.custom_data"
+profile=$1
+results=""
+while read -r pattern; do
+	prefix=""
+	negPrefix="@"
+	if [ "$(printf %c "$pattern")" = "!" ]; then
+		prefix="!"
+		negPrefix=""
+		pattern=$(echo "$pattern" | awk '{print substr($0, 2)}')
+	fi
+
+	while true; do
+		results="$results ${negPrefix:+!}$pattern"
+
+		parent=$(dirname "$pattern")
+		if [ "$parent" = "." ] || [ "$prefix" = "!" ]; then
+			break
+		fi
+
+		pattern="$parent"
+		results="$results ${prefix}$pattern${negPrefix:+/*}"
+	done
+done <"$extraDir/profile_$profile"
+
+echo "$results" | tr ' ' '\n' | sed '/^\s*$/d' | sort | uniq
