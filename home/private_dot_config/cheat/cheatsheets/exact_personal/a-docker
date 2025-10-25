@@ -1,0 +1,3 @@
+podman run -itd --name mysql-mine -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 mysql
+podman run -itd --name redis-mine -p 6379:6379 redis
+podman run -itd --name nginx-mine -p 80:80 -m 200m -e TZ=Asia/Shanghai --privileged=true nginx

@@ -1,0 +1,34 @@
+{{- $termux_host := env "TERMUX_HOST" -}}
+Host *.x
+  Tag                disabled
+  Hostname           {{ empty $termux_host | ternary "localhost" $termux_host }}
+{{- if eq .chezmoi.os "android" }}
+  Port               8022
+{{- else }}
+{{- if lookPath "onvc" }}
+  Port               443
+{{- else }}
+  Port               8888
+{{- end }}
+{{- end }}
+  SetEnv             TERM=xterm-256color
+  IdentityFile       ~/.ssh/termux_ed25519
+
+Host github.com
+  HostName           ssh.github.com
+  Port               443
+
+{{- $auto_add := env "HOME" | printf "%s/.local/bin/ssh_auto_add" }}
+
+Match !tagged disabled exec "{{ $auto_add }} %n >/dev/null"
+  IdentitiesOnly     no
+
+Host *
+  User                 git
+  ControlMaster        auto
+  ControlPath          ~/.ssh/sockets/%r@%h:%p
+  ControlPersist       10m
+  ConnectTimeout       5
+  ServerAliveInterval  30
+  ServerAliveCountMax  1
+  IdentitiesOnly       yes

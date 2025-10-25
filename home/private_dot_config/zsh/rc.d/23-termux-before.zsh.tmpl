@@ -1,0 +1,22 @@
+{{- if eq .chezmoi.os "android" -}}
+#!/usr/bin/env zsh
+
+if test -z "$SSH_CONNECTION"; then
+  if command -v "sshd" > /dev/null; then
+    sshd
+  fi
+  termux-wake-lock
+fi
+
+
+PROXY_HOST=127.0.0.1
+PROXY_PORT=7890
+
+if nc -z "$PROXY_HOST" "$PROXY_PORT" >/dev/null 2>&1; then
+  export http_proxy="http://$PROXY_HOST:$PROXY_PORT"
+  export https_proxy="http://$PROXY_HOST:$PROXY_PORT"
+  export all_proxy="socks5://$PROXY_HOST:$PROXY_PORT"
+  echo "✅ Proxy enabled"
+fi
+
+{{- end }}
