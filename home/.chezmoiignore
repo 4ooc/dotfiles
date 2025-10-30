@@ -1,0 +1,4 @@
+{{- $profile := eq .chezmoi.os "darwin" "android" | ternary .chezmoi.os "other" -}}
+
+# retrieve file patterns from profile
+{{ output (joinPath .customDataDir "script" "negative_ignore_pattern") $profile }}
