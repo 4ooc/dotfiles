@@ -1,0 +1,36 @@
+{{- if eq .chezmoi.os "android" -}}
+#!/usr/bin/env zsh
+
+run_bg() {
+  local cmd_name log_file
+  cmd_name="${1##*/}"
+  log_file="$TMPDIR/${cmd_name}_$(date +%Y%m%d).log"
+
+  "$@" >>"$log_file" 2>&1 &
+  ln -sf "$log_file" "$PREFIX/tmp/${cmd_name}.log"
+  echo "✅ $cmd_name started in background, log: $log_file"
+}
+
+if test -z "$SSH_CONNECTION"; then
+  if command -v "onvd" > /dev/null; then
+    onvd
+  fi
+
+  if has caddy; then
+     (
+       zinit cd 4ooc/selver
+
+       export ROCKET_PORT=2001
+       export WEB_VAULT_FOLDER="./web-vault"
+       export DATA_FOLDER="$XDG_DATA_HOME/vault"
+
+       run_bg caddy run --config config/Caddyfile
+       run_bg vaultwarden
+       run_bg favicon_server --port 2002
+       run_bg config-merge --port=2003
+     ) >/dev/null
+  fi
+fi
+
+alias xServer="rclone serve webdav $HOME/xCloud/DAV --addr localhost:2004"
+{{- end }}
