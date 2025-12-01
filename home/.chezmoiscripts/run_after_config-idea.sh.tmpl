@@ -1,0 +1,13 @@
+{{- $idea_project := glob "./Lib*/A*/JetBrains/Intell*" | last | default "AAA" | joinPath .chezmoi.homeDir -}}
+{{- if stat $idea_project -}}
+{{- $idea_project_xml := joinPath $idea_project "options/project.default.xml" -}}
+{{- if stat $idea_project_xml -}}
+{{- $matchNum := regexFindAll "GradleLocalSettings|MavenImportPreferences" (include $idea_project_xml) -1 | len -}}
+{{- if gt 2 $matchNum -}}
+#!/bin/sh
+
+echo "CHEZMOI(idea): config idea"
+cp {{ joinPath .customDataDir "patch/project.default.xml" | quote }} {{ $idea_project_xml | quote }}
+{{- end }}
+{{- end }}
+{{- end }}
