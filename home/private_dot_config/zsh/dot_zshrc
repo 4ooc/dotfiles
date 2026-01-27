@@ -1,0 +1,5 @@
+# +─────────────────────+
+# │ LOAD CONFIGURATIONS │
+# +─────────────────────+
+
+for f in $ZDOTDIR/rc.d/*(N); source "$f"

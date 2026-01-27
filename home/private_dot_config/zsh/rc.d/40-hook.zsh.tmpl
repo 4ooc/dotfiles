@@ -1,0 +1,47 @@
+# brew hook
+__preexec_remember_command() {
+  [[ $# -eq 0 ]] && return
+  [[ $(echo $1 | wc -l) -gt 1 ]] && return
+
+  __unset_remember_command=$2
+}
+
+__preexec_del_zinit_sched() {
+  [[ "${chpwd_functions[@]}" =~ "@zinit-scheduler" ]] && {
+    add-zsh-hook -d chpwd "@zinit-scheduler"
+    sched | grep -qo scheduler && sched -1
+  }
+}
+
+__precmd_brew_with_bundle() {
+  local _precmd_result=$?
+  local _precmd=$__unset_remember_command
+  unset __unset_remember_command
+
+  if [[ $_precmd != "brew "* ]]; then
+    return
+  fi
+
+  if [ $_precmd_result -ne 0 ]; then
+    return
+  fi
+
+  case "$_precmd" in
+    *" uninstall "* | *" upgrade "* | *" rm "* | *" install "* | *" reinstall "* | *" tap "* | *" untap "*)
+      echo "Running brew bundle ..."
+      brew bundle dump \
+        --file={{ .customDataDir }}/brewfile \
+        --force \
+        --no-vscode
+      ;;
+    *)
+      ;;
+  esac
+
+   if (( $+commands[icon] )); then
+      icon set
+   fi
+}
+
+preexec_functions+=(__preexec_del_zinit_sched __preexec_remember_command)
+precmd_functions+=(__precmd_brew_with_bundle)

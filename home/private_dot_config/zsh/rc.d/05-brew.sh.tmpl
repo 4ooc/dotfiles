@@ -1,0 +1,19 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/usr/bin/env sh
+
+export \
+  HOMEBREW_NO_{AUTO_UPDATE,INSTALL_CLEANUP}=1 \
+  HOMEBREW_BUNDLE_TAP_SKIP="homebrew/cask homebrew/core"
+
+if [ ! -e /opt/homebrew/bin/brew ]; then
+  echo "Preparing to install Homebrew"
+  HOMEBREW_URL=https://raw.githubusercontent.com/Homebrew/install/HEAD
+  /bin/bash -c "$(curl -fsSL $HOMEBREW_URL/install.sh)"
+fi
+
+if [ -z "$HOMEBREW_PREFIX" ]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+
+fpath=($HOMEBREW_PREFIX/share/zsh/site-functions ${fpath});
+{{- end }}

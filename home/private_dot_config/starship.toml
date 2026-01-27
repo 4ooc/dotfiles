@@ -1,0 +1,29 @@
+# ~/.config/starship.toml
+
+[directory]
+truncation_length = 0
+truncate_to_repo = false
+before_repo_root_style = "bold 244"
+repo_root_style = "bold underline 158"
+
+[character]
+success_symbol = '[➜](bold green)'
+error_symbol = '[✗](bold red)'
+
+[git_branch]
+symbol = " "
+
+[git_status]
+format = '([$all_status$ahead_behind]($style) )'
+
+ahead = "[⇡${count}](bold 39)"
+behind = "[⇣${count}](bold 33)"
+diverged = "[⇣${behind_count}](bold 33)[⇡${ahead_count}](bold 39)"
+staged = "[✔︎${count}](bold cyan)"
+stashed= "[≡${count}](bold green)"
+modified = "✱${count}"
+untracked = "✘${count}"
+conflicted = "‼${count}"
+
+[lua]
+symbol = ' '

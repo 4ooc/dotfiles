@@ -1,0 +1,36 @@
+#!/bin/sh
+
+extraDir="${CHEZMOI_SOURCE_DIR:-$(chezmoi source-path)}/.custom_data"
+profile=$1
+file="$extraDir/profile_$profile"
+
+results=""
+
+while IFS= read -r pattern; do
+	[ -z "$pattern" ] && continue
+
+	prefix=""
+	negPrefix="!"
+	case "$pattern" in
+	!*)
+		prefix="!"
+		negPrefix=""
+		pattern=${pattern#\!}
+		;;
+	esac
+
+	cur="$pattern"
+	while :; do
+		results="$results ${negPrefix}$cur"
+
+		[ "$prefix" = "!" ] && break
+
+		parent=${cur%/*}
+		[ "$parent" = "$cur" ] && break
+
+		cur="$parent"
+		results="$results ${prefix}${cur}${negPrefix:+/*}"
+	done
+done <"$file"
+
+echo "$results" | tr ' ' '\n' | sed '/^\s*$/d' | sort -u

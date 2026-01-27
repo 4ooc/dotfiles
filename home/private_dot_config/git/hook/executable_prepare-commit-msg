@@ -1,0 +1,3 @@
+#!/bin/sh
+
+[ -z "$2" ] && exec < /dev/tty && ${0%/*}/commitizen_mine.js --hook || true

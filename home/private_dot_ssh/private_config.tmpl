@@ -1,0 +1,17 @@
+Include config.d/*.conf
+
+{{- $auto_add := lookPath "ssh_auto_add" }}
+{{- if stat $auto_add }}
+
+Match !tagged disabled exec "{{ $auto_add }} %n >/dev/null"
+  IdentitiesOnly     no
+{{- end }}
+
+Host *
+  ControlMaster        auto
+  ControlPath          ~/.ssh/sockets/%r@%h:%p
+  ControlPersist       10m
+  ConnectTimeout       5
+  ServerAliveInterval  30
+  ServerAliveCountMax  1
+  IdentitiesOnly       yes

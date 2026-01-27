@@ -1,0 +1,13 @@
+background-blur = 15
+background-opacity = 0.8
+
+font-family = Maple Mono NF CN
+font-size = 13
+
+macos-icon = custom
+macos-option-as-alt = true
+macos-titlebar-style = hidden
+
+confirm-close-surface = false
+quit-after-last-window-closed = true
+theme = Material Design Colors

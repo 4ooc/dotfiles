@@ -1,0 +1,12 @@
+{{ if lookPath "brew" -}}
+{{- $bundlePath := joinPath .customDataDir "Brewfile" -}}
+{{- $packageNum := env "HOMEBREW_PREFIX" | printf "%s/Caskroom/*" | glob | len -}}
+{{- $bundleNum := regexFindAll "cask \"" (include $bundlePath) -1 | len -}}
+{{ if lt $packageNum $bundleNum -}}
+#!/bin/sh
+
+echo "CHEZMOI(brew): install bundle"
+brew bundle --no-upgrade --verbose --file="{{ $bundlePath }}"
+
+{{- end }}
+{{- end }}

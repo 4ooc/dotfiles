@@ -1,0 +1,38 @@
+{{- if eq .chezmoi.os "darwin" }}
+{{- if include "/etc/pam.d/sudo" | contains "pam_tid.so" | not -}}
+#!/bin/sh
+
+defaults() {
+  echo "defaults" $@
+  /usr/bin/defaults $@
+}
+
+if launchctl list | grep -q '^com\.apple\.rcd$'; then
+  echo "launchctl unload -w unload com.apple.rcd"
+  launchctl unload -w /System/Library/LaunchAgents/com.apple.rcd.plist
+fi
+
+sudo sed -i ".bak" '2s/^/auth       sufficient     pam_tid.so\'$'\n/g' /etc/pam.d/sudo
+
+defaults write org.hammerspoon.Hammerspoon MJConfigFile "~/.config/hammerspoon/init.lua"
+
+defaults write com.apple.dock tilesize -int 48
+defaults write com.apple.dock show-recents -bool false
+defaults delete com.apple.dock persistent-others
+
+defaults write com.apple.menuextra.clock ShowSeconds -bool true
+
+# Avoids creation of .DS_Store and AppleDouble files
+defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
+defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
+
+defaults write com.apple.finder AppleShowAllFiles 1
+defaults write com.apple.finder ShowHardDrivesOnDesktop 0
+defaults write com.apple.finder ShowExternalHardDrivesOnDesktop 1
+defaults write com.apple.finder ShowRemovableMediaOnDesktop 1
+defaults write com.apple.finder ShowMountedServersOnDesktop 1
+
+killall Finder -q
+killall Dock -q
+{{- end}}
+{{- end }}

@@ -1,0 +1,50 @@
+#!/usr/zsh
+
+setopt no_nomatch
+
+set -a
+
+TZ=Asia/Shanghai
+TERM=xterm-256color
+
+CODE_SPACE="$HOME/Code"
+
+# config xdg path
+XDG_CACHE_HOME="$HOME/.cache"
+XDG_CONFIG_HOME="$HOME/.config"
+XDG_DATA_HOME="$HOME/.local/share"
+XDG_STATE_HOME="$HOME/.local/state"
+
+# less history
+LESSHISTFILE="$XDG_CACHE_HOME/less/less_history"
+
+# go
+GOPATH="$XDG_CACHE_HOME/go"
+GOPROXY="https://goproxy.cn,https://goproxy.io,direct"
+
+# python
+PYTHONSTARTUP="${XDG_CONFIG_HOME}/python/init.py"
+
+# ruby
+GEM_HOME="$XDG_DATA_HOME/gem"
+GEM_SPEC_CACHE="$GEM_HOME/specs"
+GEM_PATH="$GEM_HOME"
+
+BUNDLE_PATH="$XDG_DATA_HOME/bundle"
+BUNDLE_APP_CONFIG="$XDG_CONFIG_HOME/bundle"
+
+# node
+NODE_PATH="${PREFIX:-/opt/homebrew}/lib/node_modules"
+NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/npmrc"
+
+# rust
+CARGO_HOME="$XDG_DATA_HOME/cargo"
+
+# gradle
+GRADLE_USER_HOME="$XDG_CACHE_HOME/gradle"
+
+# maven
+# Avoid using Maven wrapper in IDEA unless necessary, as its download path is fixed to ~/.m2
+MAVEN_USER_HOME="$XDG_CONFIG_HOME/maven"
+
+set +a
