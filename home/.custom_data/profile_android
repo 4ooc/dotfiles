@@ -1,0 +1,16 @@
+!*
+.config/git
+.config/npm
+.config/rclone
+.config/starship.toml
+.config/zlua
+.config/zsh/*/*aliases.zsh
+.config/zsh/*/*auth.sh
+.config/zsh/*/*function-useful.zsh
+.config/zsh/*/*history.zsh
+.config/zsh/*/*termux*.zsh
+.config/zsh/*/*zinit.zsh
+.config/zsh/.zprofile
+.config/zsh/.zshrc
+.ssh
+.termux

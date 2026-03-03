@@ -1,0 +1,11 @@
+{{- $termux_host := env "TERMUX_HOST" -}}
+Host *.x
+  Tag                disabled
+  Hostname           {{ empty $termux_host | ternary "localhost" $termux_host }}
+{{- if eq .chezmoi.os "android" }}
+  Port               8022
+{{- else }}
+  Port               {{ empty $termux_host | ternary 443 8888 }}
+{{- end }}
+  SetEnv             TERM=xterm-256color
+  IdentityFile       ~/.ssh/termux_ed25519

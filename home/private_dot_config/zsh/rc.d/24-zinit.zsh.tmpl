@@ -1,0 +1,138 @@
+#!/usr/bin/env zsh
+
+ZINIT_PATH="${XDG_DATA_HOME}/zinit"
+ZINIT_HOME="${ZINIT_PATH}/zinit.git"
+ZPFX="$HOME/.local"
+[ ! -d $ZINIT_HOME/.git ] && git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME" --depth=1
+builtin source "${ZINIT_HOME}/zinit.zsh"
+
+functions -c zinit __original_zinit
+typeset -ga _zinit_light_buf
+
+zinit() {
+  local cmd=$1
+  shift
+
+  case "$cmd" in
+    light|ice)
+      _zinit_light_buf+=("$@")
+      return
+      ;;
+
+    snippet|default-ice)
+      if (( ${#_zinit_light_buf} )); then
+        __original_zinit light-mode for "${_zinit_light_buf[@]}"
+        _zinit_light_buf=()
+      fi
+      __original_zinit "$cmd" "$@"
+      return
+      ;;
+
+    *)
+      ;;
+  esac
+}
+
+zinit light @NICHOLAS85/z-a-eval
+zinit light @zdharma-continuum/zinit-annex-{default-ice,patch-dl,binary-symlink}
+
+zinit default-ice light-mode depth'1' -q
+
+zinit ice atinit'export _ZL_DATA=$XDG_CONFIG_HOME/zlua/zlua'
+zinit light @skywind3000/z.lua
+
+zinit light @zsh-users/zsh-autosuggestions
+zinit light @zdharma-continuum/fast-syntax-highlighting
+
+# disable expand ~
+zinit ice eval'zstyle -L ":completion:*" completer | sed "s/_expand //"'
+
+# disable recent dirs
+# zinit ice atinit'zstyle ":autocomplete:recent-dirs" enabled false'
+zinit ice atload'
+  zstyle ":autocomplete:*"    min-input  2
+  zstyle ":autocomplete:*"    timeout    3
+  zstyle ":autocomplete:*"    delay      0.2
+  zstyle ":autocomplete:*:*"  list-lines 8
+  bindkey              '^I' menu-select
+  bindkey "$terminfo[kcbt]" menu-select
+  bindkey -M menuselect              '^I'         menu-complete
+  bindkey -M menuselect "$terminfo[kcbt]" reverse-menu-complete
+'
+zinit light @marlonrichert/zsh-autocomplete
+
+zinit default-ice light-mode proto'ssh' nocompile -q
+{{- if eq .chezmoi.os "darwin" }}
+
+zinit ice as'null' lbin'!.build/release/ql' proto
+zinit ice atclone'swift build --configuration release'
+zinit ice atpull"%atclone" atload'alias q=ql'
+zinit light @pmeinhardt/ql
+
+zinit ice lbin'!'
+zinit light @4ooc/envctl
+{{- end }}
+
+zinit ice make from'vault.x' lbin'!bin/**'
+zinit light @onv
+
+zinit ice from'vault.x' depth=1 lbin'!{pass,ssh_auto_add,ssh_signer}' 
+{{- if eq .chezmoi.os "android" }}
+zinit ice atclone"for f in *(.); do sed -i '1 s|^#!/bin/|#!/data/data/com.termux/files/usr/bin/|' \$f; done" atpull'%atclone'
+{{- end }}
+zinit light @pass
+
+{{- if eq .chezmoi.os "android" }}
+
+zinit ice lbin'!bin/*' extract
+zinit light @4ooc/selver
+{{- else }}
+
+zinit ice lbin'!bin/*'
+zinit light @4ooc/cola
+{{- end }}
+
+zinit ice from'gh-r' extract'!' compile
+zinit light @4ooc/sdkman-cli
+
+zinit ice lbin'!bin/**/*'
+zinit light @4ooc/scripts
+
+zinit default-ice lucid from'gh-r' nocompile light-mode lbin'!' -q
+
+zinit ice atclone'
+  ./starship init zsh > init.zsh;
+  ./starship completions zsh > _starship
+'
+zinit ice atpull"%atclone" src"init.zsh"
+zinit light starship/starship
+
+{{- if eq .chezmoi.os "darwin" }}
+
+zinit ice atinit'alias cat="bat --plain"'
+zinit light @sharkdp/bat
+
+zinit ice extract'!' lbin'!nvim' nocompletions
+zinit ice atinit'export EDITOR=nvim;'
+zinit light @neovim/neovim
+
+zinit ice extract'!'
+zinit ice eval'echo "export LS_COLORS=\"$(./vivid generate snazzy)\""'
+zinit light @sharkdp/vivid
+{{- end }}
+
+zinit light @shopify/ejson
+
+zinit default-ice -c -q
+
+functions -c __original_zinit zinit
+unfunction __original_zinit
+unset all_params
+
+local ZSH_COMPLETION="https://raw.githubusercontent.com/zsh-users/zsh-completions/master/src/"
+zinit ice as'completion'
+zinit snippet $ZSH_COMPLETION/_mvn
+zinit ice as'completion'
+zinit snippet $ZSH_COMPLETION/_golang
+
+zinit snippet @OMZP::sudo
