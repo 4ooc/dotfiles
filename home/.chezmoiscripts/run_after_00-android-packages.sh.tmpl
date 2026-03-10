@@ -1,0 +1,29 @@
+{{- if lookPath "pkg" -}}
+{{- $dict := dict 
+  "expect" "expect"
+  "eza" "eza"
+  "fd" "fd"
+  "git" "git-delta"
+  "lua" "lua53"
+  "make" "make"
+  "rclone" "rclone"
+  "rg" "ripgrep"
+  "ssh" "openssh" 
+  "zsh" "zsh"
+  "nc"  "netcat-openbsd"
+-}}
+{{- $installings := list "" -}}
+{{- range $command, $package :=  $dict }}
+{{- $installings = append $installings (lookPath $command | empty | ternary $package "" ) -}}
+{{- end }}
+{{- $installings = $installings | compact -}}
+{{- if $installings | len | lt 0 -}}
+#!/bin/sh
+
+echo "CHEZMOI(pkg): install packages"
+
+{{- range $installings }}
+pkg install {{ . }}
+{{- end }}
+{{- end }}
+{{- end }}
