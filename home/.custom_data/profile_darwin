@@ -1,0 +1,6 @@
+!.config/4ooc/tencent_key
+!.config/zsh/*/*termux*.zsh
+!.config/rclone
+!.ssh/authorized_keys
+!.ssh/git-or-shell.sh
+!.termux
