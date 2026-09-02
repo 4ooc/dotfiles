@@ -1,0 +1,17 @@
+[include]
+  path = ~/.config/git/sites/_config
+
+{{- $dir := dir .chezmoi.sourceFile | joinPath .chezmoi.sourceDir  -}}
+{{- range print $dir "/*" | glob -}}
+{{- $fname := base . | trimSuffix ".tmpl" -}}
+{{- if not (hasPrefix "_" $fname ) }}
+
+# {{ $fname }}
+[includeIf "hasconfig:remote.*.url:https://{{ $fname }}/**"]
+    path = ~/.config/git/sites/{{ $fname }}
+
+[includeIf "hasconfig:remote.*.url:git@{{- $fname -}}:*/**"]
+    path = ~/.config/git/sites/{{ $fname }}
+
+{{- end }}
+{{- end }}

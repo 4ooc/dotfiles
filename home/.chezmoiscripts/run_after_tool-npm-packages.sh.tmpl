@@ -1,0 +1,28 @@
+{{- if lookPath "npm" -}}
+{{- $packageNum := output "npm" "list" "-g" | splitList "\n" | compact | len -}}
+{{- if le $packageNum 3 -}}
+#!/bin/sh
+echo "CHEZMOI(npm): install package"
+install_list="
+  @commitlint/cli 
+  @commitlint/config-conventional 
+  @google-cloud/local-auth
+  axios
+  commitizen 
+  cos-nodejs-sdk-v5
+  cz-conventional-changelog-zh 
+  googleapis
+"
+
+temp="$(mktemp -d)"
+trap 'rm -rf "${temp}"' EXIT
+echo ${install_list} | tr ' ' '\n' | sort > "${temp}/install_list"
+npm list -g -npm | awk -Fnode_modules/ 'NR>1{print $NF}' | tr ' ' '\n' | sort > "${temp}/installed"
+
+installing=$(comm -23 "${temp}/install_list" "${temp}/installed")
+if [[ -n $installing ]]; then
+  echo "npm install -g $installing"
+  npm install -g $installing
+fi
+{{- end }}
+{{- end }}

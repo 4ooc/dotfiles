@@ -1,0 +1,11 @@
+{{- if env "NODE_PATH" | stat }}
+{{- $npmrcPath := env "NODE_PATH" | printf "%s/npm/npmrc" }}
+{{- if and (stat $npmrcPath) (include $npmrcPath | contains "cache" | not) -}}
+#!/bin/sh
+
+echo "CHEZMOI(npm): config npm"
+
+echo 'cache = {{ env "HOME" -}}/.cache/npm' >> {{ $npmrcPath | quote }}
+
+{{- end }}
+{{- end }}

@@ -1,0 +1,18 @@
+{{- $customDataDir := joinPath .chezmoi.sourceDir ".custom_data" -}}
+encryption = "age"
+[age]
+  identity = {{ joinPath .chezmoi.cacheDir "chezmoi.age" | quote }}
+  recipient = "age1pwu8umlxetey6y5uzamnncg37vfyuuvaglp8q4hdffnyhgamtfgsxkcc9f"
+
+[data] 
+  customDataDir = {{ $customDataDir | quote }}
+
+[diff]
+  pager = "delta"
+
+[merge]
+  command = "nvim"
+  args = ["-d"]
+
+[secret]
+  command = "pass"

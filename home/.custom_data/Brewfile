@@ -1,0 +1,125 @@
+tap "farion1231/ccswitch", trusted: true
+tap "roversx/tap", "https://github.com/RoversX/homebrew-tap", trusted: true
+# Simple, modern, secure file encryption
+brew "age"
+# Create and view interactive cheat sheets for *nix commands
+brew "cheat"
+# Manage your dotfiles across multiple diverse machines, securely
+brew "chezmoi"
+# Container runtimes on MacOS (and Linux) with minimal setup
+brew "colima"
+# Pack, ship and run any application as a lightweight container
+brew "docker"
+# Isolated development environments using Docker
+brew "docker-compose"
+# Modern, maintained replacement for ls
+brew "eza"
+# Simple, fast and user-friendly alternative to find
+brew "fd"
+# Play, record, convert, and stream select audio and video codecs
+brew "ffmpeg"
+# Command-line fuzzy finder written in Go
+brew "fzf"
+# GitHub command-line tool
+brew "gh"
+# Syntax-highlighting pager for git and diff output
+brew "git-delta"
+# Git extension for versioning large files
+brew "git-lfs"
+# GNU implementation of the famous stream editor
+brew "gnu-sed"
+# Open source programming language to build simple/reliable/efficient software
+brew "go"
+# Run and Test HTTP Requests with plain text and curl
+brew "hurl"
+# Lightweight and flexible command-line JSON processor
+brew "jq"
+# Powerful, lightweight programming language
+brew "lua"
+# Control and observe media playback from the command-line
+brew "media-control"
+# Deep clean and optimize your Mac
+brew "mole"
+# Open-source, cross-platform JavaScript runtime environment
+brew "node"
+# Tool for managing OCI containers and pods
+brew "podman"
+# Show ps output as a tree
+brew "pstree"
+# Search tool like grep and The Silver Searcher
+brew "ripgrep"
+# SOcket CAT: netcat on steroids
+brew "socat"
+# Very fast implementation of tldr in Rust
+brew "tealdeer"
+# Terminal multiplexer
+brew "tmux"
+# Extremely fast Python package installer and resolver, written in Rust
+brew "uv"
+# CLI client for the Woodpecker Continuous Integration server
+brew "woodpecker-cli"
+# Menu bar tool to limit maximum charging percentage
+cask "aldente"
+# Enable Windows-like alt-tab
+cask "alt-tab"
+# Android SDK component
+cask "android-platform-tools"
+# Platform for API documentation, debugging, and testing
+cask "apifox"
+# Keyboard, mouse and touchpad motion gestures
+cask "betterandbetter"
+# Configuration manager for Claude Code, Codex, Gemini CLI, OpenCode and OpenClaw
+cask "farion1231/ccswitch/cc-switch", trusted: true
+# OpenAI's previous ChatGPT desktop app
+cask "chatgpt-classic"
+# Terminal-based AI coding assistant
+cask "claude-code"
+# OpenAI's coding agent that runs in your terminal
+cask "codex"
+# Database management tool
+cask "dbx"
+cask "font-maple-mono-nf-cn"
+cask "font-plangothic"
+# Terminal emulator that uses platform-native UI and GPU acceleration
+cask "ghostty"
+# Desktop automation application
+cask "hammerspoon"
+# Chromium-based web browser
+cask "helium-browser"
+# Free and open-source media player
+cask "iina"
+# Java IDE by JetBrains
+cask "intellij-idea"
+# Note taking and to-do application with synchronisation capabilities
+cask "joplin"
+# Launchpad alternative
+cask "launchos"
+# Music streaming platform
+cask "neteasemusic"
+# Quick Look generator for Markdown files
+cask "qlmarkdown"
+# Control your tools with a few keystrokes
+cask "raycast"
+# Git GUI client
+cask "sourcegit"
+# Rime input method engine
+cask "squirrel-app"
+# Quicklook extension for source files
+cask "syntax-highlight"
+# Desktop client for Telegram messenger
+cask "telegram-desktop"
+# Open-source code editor
+cask "visual-studio-code"
+# Free messaging and calling application
+cask "wechat"
+# Gecko based web browser
+cask "zen"
+npm "@commitlint/cli"
+npm "@commitlint/config-conventional"
+npm "@google-cloud/local-auth"
+npm "axios"
+npm "commitizen"
+npm "cos-nodejs-sdk-v5"
+npm "cz-conventional-changelog-zh"
+npm "googleapis"
+npm "mime-types"

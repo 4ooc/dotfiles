@@ -1,0 +1,18 @@
+{{- $zshEnv := env "PREFIX" | printf "%s/etc/zshenv" }}
+{{- if and (stat $zshEnv) (include $zshEnv | contains "ZDOTDIR") | not }}
+{{- $sudo := eq .chezmoi.os "darwin" | ternary "sudo" "" -}}
+#!/bin/sh
+echo "CHEZMOI(zsh): config zshenv"
+
+if [ ! -e {{ $zshEnv | quote }} ]; then
+  {{ printf "%s touch '%s'" $sudo $zshEnv | trim }}
+fi
+
+export_str='export ZDOTDIR="$HOME/.config/zsh"'
+{{- if eq .chezmoi.os "darwin" "android" }}
+{{ printf "%s sed -i.bak '/.*ZDOTDIR=.*/d' '%s'" $sudo $zshEnv | trim }}
+{{ printf "echo \"$export_str\" | %s tee -a '%s' 1>/dev/null" $sudo $zshEnv | trim }}
+{{- else }}
+echo "CHEZMOI(zsh): Not implements for {{ .chezmoi.os }}"
+{{- end }}
+{{- end }}

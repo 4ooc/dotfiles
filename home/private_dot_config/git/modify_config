@@ -1,0 +1,44 @@
+{{- /* chezmoi:modify-template */ -}}
+{{- if includeTemplate "hasPass" -}}
+
+[include]
+  path = ~/.config/git/sites/_routes
+
+[core]
+  hooksPath = ~/.config/git/hook
+
+[help]
+  autocorrect = 1
+
+[gpg]
+  format = ssh
+[gpg "ssh"]
+  program = ssh_signer
+  allowedSignersFile = __AUTO__
+
+[commit]
+  gpgsign = true
+[tag]
+  gpgsign = true
+[pull]
+  rebase = true
+
+{{ if eq .chezmoi.os "android" -}}
+[safe]
+  directory = *
+{{- end -}}
+
+[include]
+  path = ~/.config/git/delta.config
+
+[alias]
+  l = !git log --graph --abbrev-commit -n 20 --pretty=format:'%C(auto)%h %C(bold blue)%G?%Creset %s %C(yellow)%d%Creset' 2>/dev/null
+
+[url "git@github.com:"]
+  insteadOf = git:
+
+[url "git@github.com:"]
+  pushInsteadOf = https://github.com/
+{{ else }}
+{{- .chezmoi.stdin }}
+{{- end -}}

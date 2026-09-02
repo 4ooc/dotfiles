@@ -1,0 +1,54 @@
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  redis:
+    profiles:
+      - cache
+    image: redis:7-alpine
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - ${XDG_DATA_HOME}/containers/redis:/data
+      - ./secret/redis/redis.conf:/etc/redis/redis.conf:ro
+    command: redis-server /etc/redis/redis.conf
+    logging: *default-logging
+
+  mysql:
+    profiles:
+      - db
+    image: mysql:latest
+    container_name: mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456789
+      TZ: Asia/Shanghai
+    ports:
+      - "127.0.0.1:3306:3306"
+    volumes:
+      - ${XDG_DATA_HOME}/containers/mysql:/var/lib/mysql
+    logging: *default-logging
+
+  cli-proxy-api:
+    profiles:
+      - ai
+    image: eceasy/cli-proxy-api:latest
+    container_name: cli-proxy-api
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8317:8317"
+      # - "127.0.0.1:8085:8085"
+      - "127.0.0.1:1455:1455"
+      # - "127.0.0.1:54545:54545"
+      # - "127.0.0.1:51121:51121"
+      # - "127.0.0.1:11451:11451"
+    volumes:
+      - ./secret/CPA/config.yaml:/CLIProxyAPI/config.yaml
+      - ./secret/CPA/auth:/root/.cli-proxy-api
+      - ${XDG_DATA_HOME}/containers/cli-proxy-api/logs:/CLIProxyAPI/logs
+    logging: *default-logging
